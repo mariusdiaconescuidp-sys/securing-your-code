@@ -1,0 +1,1 @@
+{"productName":"Rad Dictate Workbench","version":"0.1.0","identifier":"local.rad-dictate.workbench","build":{"beforeDevCommand":"npm run dev","beforeBuildCommand":"npm run build","devUrl":"http://localhost:5173","frontendDist":"../dist"},"app":{"windows":[{"title":"Rad Dictate Workbench","width":980,"height":720}]},"bundle":{"active":true,"targets":"nsis"}}
