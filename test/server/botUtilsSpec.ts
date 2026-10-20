@@ -10,6 +10,19 @@ const security = require('../../lib/insecurity')
 describe('botUtils', () => {
   const botUtils = require('../../lib/botUtils')
 
+  describe('sanitizeUserInput', () => {
+    it('removes dangerous characters from usernames before they reach the chatbot', () => {
+      const maliciousUsername = 'admin"); process=null; users.addUser("1337", "test'
+      const sanitized = security.sanitizeUserInput(maliciousUsername)
+      expect(sanitized).to.not.include(';')
+      expect(sanitized).to.not.include('"')
+      expect(sanitized).to.not.include('(')
+      expect(sanitized).to.not.include(')')
+      expect(sanitized).to.not.include('=')
+      expect(security.sanitizeUserInput('bkimminich')).to.equal('bkimminich')
+    })
+  })
+
   describe('testFunction', () => {
     it('returns static test response', () => {
       expect(botUtils.testFunction()).to.deep.equal({

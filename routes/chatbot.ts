@@ -52,7 +52,7 @@ async function processQuery (user: User, req: Request, res: Response, next: Next
     res.status(503).send()
     return
   }
-  const username = user.username
+  const username = security.sanitizeUserInput(user.username)
   if (!username) {
     res.status(200).json({
       action: 'namequery',
@@ -130,6 +130,7 @@ async function setUserName (user: User, req: Request, res: Response) {
     return
   }
   try {
+    const username = security.sanitizeUserInput(req.body.query)
     const userModel = await UserModel.findByPk(user.id)
     if (userModel == null) {
       res.status(401).json({
@@ -138,12 +139,12 @@ async function setUserName (user: User, req: Request, res: Response) {
       })
       return
     }
-    const updatedUser = await userModel.update({ username: req.body.query })
+    const updatedUser = await userModel.update({ username })
     const updatedUserResponse = utils.queryResultToJson(updatedUser)
     const updatedToken = security.authorize(updatedUserResponse)
     // @ts-expect-error FIXME some properties missing in updatedUserResponse
     security.authenticatedUsers.put(updatedToken, updatedUserResponse)
-    bot.addUser(`${updatedUser.id}`, req.body.query)
+    bot.addUser(`${updatedUser.id}`, username)
     res.status(200).json({
       action: 'response',
       body: bot.greet(`${updatedUser.id}`),
@@ -181,7 +182,7 @@ export const status = function status () {
       return
     }
 
-    const username = user.username
+    const username = security.sanitizeUserInput(user.username)
 
     if (!username) {
       res.status(200).json({
