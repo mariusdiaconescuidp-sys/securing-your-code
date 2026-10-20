@@ -19,12 +19,13 @@ module.exports = function updateUserProfile () {
     if (loggedInUser) {
       UserModel.findByPk(loggedInUser.data.id).then((user: UserModel | null) => {
         if (user != null) {
+          const username = security.sanitizeUserInput(req.body.username)
           challengeUtils.solveIf(challenges.csrfChallenge, () => {
             return ((req.headers.origin?.includes('://htmledit.squarefree.com')) ??
               (req.headers.referer?.includes('://htmledit.squarefree.com'))) &&
-              req.body.username !== user.username
+              username !== user.username
           })
-          void user.update({ username: req.body.username }).then((savedUser: UserModel) => {
+          void user.update({ username }).then((savedUser: UserModel) => {
             // @ts-expect-error FIXME some properties missing in savedUser
             savedUser = utils.queryResultToJson(savedUser)
             const updatedToken = security.authorize(savedUser)

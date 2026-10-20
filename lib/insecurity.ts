@@ -69,6 +69,11 @@ export const sanitizeSecure = (html: string): string => {
   }
 }
 
+export const sanitizeUserInput = (input: string | undefined | null): string => {
+  const value = String(input ?? '').trim()
+  return value.replace(/[\x00-\x1F\x7F<>"'`\\;=()\[\]{}]/g, '')
+}
+
 export const authenticatedUsers: IAuthenticatedUsers = {
   tokenMap: {},
   idMap: {},

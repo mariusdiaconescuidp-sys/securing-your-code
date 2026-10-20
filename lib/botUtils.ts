@@ -10,9 +10,10 @@ import * as security from './insecurity'
 import * as challengeUtils from './challengeUtils'
 
 export async function productPrice (query: string, user: string) {
+  const normalizedQuery = security.sanitizeUserInput(query)
   const products = await ProductModel.findAll()
   const queriedProducts = products
-    .filter((product: Product) => fuzz.partial_ratio(query, product.name) > 60)
+    .filter((product: Product) => fuzz.partial_ratio(normalizedQuery, product.name) > 60)
     .map((product: Product) => `${product.name} costs ${product.price}¤`)
   return {
     action: 'response',
